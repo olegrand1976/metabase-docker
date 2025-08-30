@@ -1,0 +1,40 @@
+# =========================================
+# Tutoriel de mise en place Metabase + Postgres
+# =========================================
+# 1. Copier ce dépôt et placer-vous dans le dossier.
+# 2. Adapter si besoin le fichier .env (variables par défaut fournies)
+# 3. Lancer la stack avec :
+#      docker-compose up -d
+# 4. Accéder à Metabase sur http://localhost:3000
+# 5. Identifiants de la base : voir .env
+# =========================================
+
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  metabase:
+    image: metabase/metabase:latest
+    environment:
+      MB_DB_TYPE: ${MB_DB_TYPE}
+      MB_DB_DBNAME: ${MB_DB_DBNAME}
+      MB_DB_PORT: ${MB_DB_PORT}
+      MB_DB_USER: ${MB_DB_USER}
+      MB_DB_PASS: ${MB_DB_PASS}
+      MB_DB_HOST: ${MB_DB_HOST}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  db_data:
